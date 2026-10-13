@@ -8,4 +8,6 @@
 
 ## 部署
 
-仓库启用 GitHub Pages，并将部署来源设置为 `GitHub Actions`。之后推送到默认分支即可自动发布。
+仓库已启用 GitHub Pages，部署来源为 `main` 分支根目录。推送到 `main` 即自动发布。
+
+线上地址：https://rosamondl.github.io/ai-personality-test/
