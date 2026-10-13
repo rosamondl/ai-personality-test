@@ -1,0 +1,891 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>测测你是哪个AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+QingKe+HuangYou&display=swap">
+<style>
+/* 版式：单列手机优先；首页像一段聊天记录，答题像和"人格识别模型"对话，结果是一张"模型卡" */
+:root{
+  --bg:#ECEEF2; --dot:#CDD2DB; --surface:#FFFFFF; --surface-2:#F5F6F9;
+  --ink:#14161B; --muted:#646B7A; --line:#D4D8E0;
+  --accent:#3651F5; --hl:#FFE14D; --hl-ink:#14161B;
+  --f-display:"ZCOOL QingKe HuangYou","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --f-body:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --shadow:4px 4px 0 var(--ink);
+  --radius:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101217; --dot:#252A34; --surface:#1A1D24; --surface-2:#22262F;
+    --ink:#ECEEF3; --muted:#9AA2B1; --line:#2E3440;
+    --accent:#8C9CFF; --hl:#FFD84D; --hl-ink:#14161B; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101217; --dot:#252A34; --surface:#1A1D24; --surface-2:#22262F;
+  --ink:#ECEEF3; --muted:#9AA2B1; --line:#2E3440;
+  --accent:#8C9CFF; --hl:#FFD84D; --hl-ink:#14161B; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{min-height:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body);
+  font-size:16px; line-height:1.65;
+  background-image:radial-gradient(var(--dot) 1.2px, transparent 1.3px);
+  background-size:22px 22px;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.app{max-width:500px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+.screen{display:flex;flex-direction:column;gap:22px}
+
+/* ---------- 通用 ---------- */
+.btn{
+  text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:2px solid var(--ink);border-radius:999px;background:var(--surface);
+  padding:12px 22px;font-weight:700;font-size:16px;box-shadow:var(--shadow);
+  transition:transform .12s, box-shadow .12s;
+}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink)}
+.btn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 var(--ink)}
+.btn.primary{background:var(--ink);color:var(--bg)}
+.btn.hl{background:var(--hl);color:var(--hl-ink)}
+.btn.small{padding:8px 14px;font-size:14px;box-shadow:3px 3px 0 var(--ink)}
+.btn.ghost{box-shadow:none;border-color:var(--line);background:transparent}
+.btn.ghost:hover{border-color:var(--ink);transform:none}
+.mono{font-family:var(--f-mono)}
+.eyebrow{font-family:var(--f-body);font-size:12px;letter-spacing:.06em;color:var(--muted)}
+.card{background:var(--surface);border:2px solid var(--ink);border-radius:var(--radius);box-shadow:var(--shadow)}
+
+/* ---------- 首页 ---------- */
+.hero{display:flex;flex-direction:column;gap:14px;padding-top:12px}
+.hero h1{
+  font-family:var(--f-display);font-weight:400;font-size:clamp(46px,14vw,68px);
+  line-height:1.02;margin:0;letter-spacing:.01em;text-wrap:balance;
+}
+.hero h1 .mark{background:var(--hl);color:var(--hl-ink);padding:0 .12em;border-radius:6px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.cursor{display:inline-block;width:.42em;height:.9em;background:var(--accent);vertical-align:-.08em;margin-left:.08em;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.hero p{margin:0;color:var(--muted);font-size:15px}
+.meta-row{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-family:var(--f-body);font-size:12px;border:1.5px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--surface);color:var(--muted)}
+
+.preview{padding:16px;display:flex;flex-direction:column;gap:12px}
+.preview-head{display:flex;justify-content:space-between;align-items:center}
+.msg{display:flex;gap:10px;align-items:flex-start}
+.ava{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:19px;border:2px solid var(--ink);background:var(--surface-2)}
+.msg .who{font-size:12px;color:var(--muted);font-family:var(--f-mono);margin-bottom:2px}
+.bubble{background:var(--surface-2);border:1.5px solid var(--line);border-radius:4px 16px 16px 16px;padding:9px 13px;font-size:14.5px;line-height:1.6;min-width:0}
+.msg>div{min-width:0}
+.preview .msg{opacity:1;transition:opacity .4s}
+.start-wrap{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.start-wrap .btn{font-size:18px;padding:15px 22px}
+.start-note{font-size:13px;color:var(--muted);text-align:center}
+
+.dex-title{display:flex;justify-content:space-between;align-items:baseline}
+.dex-title h2{font-family:var(--f-display);font-weight:400;font-size:28px;margin:0}
+.dex-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dex-item{
+  display:flex;gap:10px;align-items:center;text-align:left;
+  background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;
+  transition:border-color .15s, transform .15s;
+}
+.dex-item:hover{border-color:var(--ink);transform:translateY(-2px)}
+.dex-item .dot{flex:none;width:34px;height:34px;border-radius:10px;border:1.5px solid var(--ink);display:grid;place-items:center;font-size:18px}
+.dex-item b{display:block;font-size:14px;line-height:1.3}
+.dex-item span{display:block;font-size:12px;color:var(--muted);line-height:1.3}
+.dex-item>div{min-width:0}
+.dex-item.locked{border-style:dashed}
+.foot{font-size:12px;color:var(--muted);line-height:1.7;text-align:center;padding-top:6px}
+
+/* ---------- 答题 ---------- */
+.qbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:flex;flex-direction:column;gap:8px}
+.qbar-row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.progress{height:10px;border:2px solid var(--ink);border-radius:999px;background:var(--surface);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s ease}
+.counter{font-family:var(--f-mono);font-size:13px;color:var(--muted)}
+.counter b{color:var(--ink);font-size:15px}
+.chat{display:flex;flex-direction:column;gap:14px}
+.bot-name{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center}
+.bot-name .tag{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:0 6px}
+.qbubble{font-size:17.5px;font-weight:500;line-height:1.65;padding:14px 16px;border-radius:4px 18px 18px 18px;background:var(--surface);border:2px solid var(--ink)}
+.qbubble.special{background:var(--hl);color:var(--hl-ink)}
+.typing{display:inline-flex;gap:4px;padding:16px 18px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+.prev{opacity:.55;display:flex;flex-direction:column;gap:8px}
+.prev .qbubble{font-size:14px;font-weight:400;border-width:1.5px;border-color:var(--line);padding:9px 12px}
+.me{align-self:flex-end;max-width:88%;background:var(--ink);color:var(--bg);border-radius:18px 4px 18px 18px;padding:9px 14px;font-size:14.5px}
+.opts{display:flex;flex-direction:column;gap:10px;align-items:stretch}
+.opt{
+  text-align:left;border:2px solid var(--ink);border-radius:16px;background:var(--surface);
+  padding:12px 14px 12px 12px;font-size:15.5px;line-height:1.55;display:flex;gap:10px;align-items:flex-start;
+  box-shadow:3px 3px 0 var(--ink);transition:transform .1s, box-shadow .1s, background .15s;
+}
+.opt .k{flex:none;font-family:var(--f-mono);font-weight:700;font-size:13px;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;border:1.5px solid var(--ink);margin-top:1px}
+.opt:hover{background:var(--surface-2)}
+.opt:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.opt.sel{background:var(--hl);color:var(--hl-ink)}
+.opt.sel .k{background:var(--hl-ink);color:var(--hl);border-color:var(--hl-ink)}
+.opt>span:last-child{min-width:0}
+.hint{font-size:12.5px;color:var(--muted);text-align:center}
+
+/* ---------- 结果 ---------- */
+.res-tag{display:flex;justify-content:center}
+.res-tag span{font-weight:700;font-size:12.5px;letter-spacing:.06em;border:1.5px solid var(--ink);border-radius:999px;padding:4px 12px;background:var(--hl);color:var(--hl-ink)}
+.model{overflow:hidden}
+.model-head{padding:22px 20px 18px;color:var(--tc-ink);background:var(--tc);display:flex;flex-direction:column;gap:12px;position:relative}
+.model-head::after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.18) 1.2px,transparent 1.3px);background-size:16px 16px;pointer-events:none}
+.mh-top{display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;z-index:1}
+.mh-top span{font-size:12px;opacity:.85;letter-spacing:.06em}
+.mh-main{display:flex;gap:16px;align-items:center;position:relative;z-index:1}
+.big-ava{flex:none;width:84px;height:84px;border-radius:24px;background:var(--surface);border:2px solid var(--ink);display:grid;place-items:center;font-size:46px;box-shadow:3px 3px 0 var(--ink)}
+.mh-main>div{min-width:0}
+.mh-code{font-family:var(--f-mono);font-weight:700;font-size:15px;opacity:.9}
+.mh-name{font-family:var(--f-display);font-weight:400;font-size:clamp(34px,10vw,46px);line-height:1.05;margin:2px 0 0}
+.match{position:relative;z-index:1;display:inline-flex;align-self:flex-start;gap:8px;align-items:center;background:var(--surface);color:var(--ink);border:1.5px solid var(--ink);border-radius:999px;padding:5px 12px;font-size:13px;font-weight:500;font-variant-numeric:tabular-nums}
+.model-body{padding:18px 18px 20px;display:flex;flex-direction:column;gap:18px}
+.say{position:relative;background:var(--surface-2);border:2px solid var(--ink);border-radius:4px 18px 18px 18px;padding:12px 15px;font-size:16px;font-weight:500;line-height:1.65}
+.say::before{content:"口头禅";display:block;font-size:11px;color:var(--muted);font-weight:400;margin-bottom:2px;letter-spacing:.06em}
+.desc{margin:0;font-size:15.5px;line-height:1.85}
+.sec-t{font-family:var(--f-display);font-weight:400;font-size:22px;margin:0 0 8px;display:flex;align-items:center;gap:8px}
+.sec-t small{font-family:var(--f-mono);font-size:11px;color:var(--muted);letter-spacing:.05em}
+.scenes{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.scenes li{display:flex;gap:10px;font-size:15px;line-height:1.6}
+.scenes li::before{content:"›";font-family:var(--f-mono);font-weight:700;color:var(--tc-text)}
+.pb{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pb>div{border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;min-width:0}
+.pb .eyebrow{display:block;margin-bottom:2px}
+.pb p{margin:0;font-size:14.5px;line-height:1.55}
+
+.params{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.param{background:var(--surface-2);border-radius:12px;padding:10px 10px 9px;min-width:0}
+.param .eyebrow{font-size:10.5px;letter-spacing:.04em;display:block}
+.param b{display:block;font-family:var(--f-mono);font-size:19px;line-height:1.3;font-variant-numeric:tabular-nums;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.param span{display:block;font-size:11.5px;color:var(--muted);line-height:1.4}
+
+.dims{display:flex;flex-direction:column;gap:14px}
+.dgroup h4{margin:0 0 6px;font-size:13px;font-family:var(--f-mono);color:var(--muted);font-weight:500;letter-spacing:.05em}
+.drow{display:grid;grid-template-columns:5.2em 54px minmax(0,1fr);gap:10px;align-items:center;padding-block:5px;border-top:1px dashed var(--line)}
+.drow:first-of-type{border-top:0}
+.drow .dn{font-size:14px;font-weight:700}
+.segs{display:flex;gap:3px}
+.segs i{flex:1;height:12px;border-radius:3px;background:var(--line)}
+.segs i.on{background:var(--tc-text)}
+.drow .dc{font-size:13.5px;color:var(--muted);line-height:1.45}
+.drow .lv{font-family:var(--f-mono);font-weight:700;font-size:12px;color:var(--ink);margin-right:4px}
+
+.alts{display:flex;flex-direction:column;gap:8px}
+.alt{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;background:var(--surface)}
+.alt:hover{border-color:var(--ink)}
+.alt>div{flex:1;min-width:0}
+.alt b{font-size:15px}
+.alt span{display:block;font-size:12.5px;color:var(--muted)}
+.alt .av{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:19px;border:2px solid var(--ink)}
+.alt .pct{font-family:var(--f-mono);font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pair .alt{flex-direction:column;align-items:flex-start;gap:4px}
+.pair .alt .eyebrow{font-size:11px}
+/* 并列结果：两张可切换的模型卡 */
+.twin{display:flex;flex-direction:column;gap:10px;align-items:center}
+.twin-hint{margin:0;font-size:13.5px;color:var(--muted);text-align:center;text-wrap:balance}
+.twin-tabs{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.twin-tab{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0;border:2px solid var(--line);border-radius:999px;background:var(--surface);color:var(--muted);padding:9px 12px;font-weight:700;font-size:15px;transition:background .15s,border-color .15s,box-shadow .15s}
+.twin-tab span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.twin-tab:hover{border-color:var(--ink);color:var(--ink)}
+.twin-tab[aria-selected="true"]{background:var(--tab-bg);color:var(--tab-ink);border-color:var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.twin-stage{touch-action:pan-y}
+.twin-dots{display:flex;justify-content:center;gap:6px;margin-top:-8px}
+.twin-dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:background .15s,width .15s}
+.twin-dots i.on{width:18px;border-radius:4px;background:var(--ink)}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions .wide{grid-column:1/-1}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-size:14px;transition:all .25s;z-index:50;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- 弹层 ---------- */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(10,12,16,.55);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.sheet{width:100%;max-width:500px;max-height:88vh;overflow:auto;background:var(--surface);border:2px solid var(--ink);border-radius:22px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1.5px solid var(--line);position:sticky;top:0;background:var(--surface);z-index:2}
+.sheet-body{padding:16px;display:flex;flex-direction:column;gap:14px}
+.x{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:var(--surface);font-size:18px;line-height:1}
+.share-img{width:100%;border-radius:14px;border:1.5px solid var(--line);display:block}
+.copybox{font-size:13.5px;background:var(--surface-2);border-radius:12px;padding:10px 12px;line-height:1.6;user-select:all;-webkit-user-select:all}
+.dex-detail .model-head{border-radius:14px}
+.dex-detail .mh-name{font-size:clamp(28px,8.4vw,38px)}
+.model{--tc-text:var(--tc-l)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .model{--tc-text:var(--tc-d)}}
+:root[data-theme="dark"] .model{--tc-text:var(--tc-d)}
+.confirm-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+@media (min-width:640px){
+  .app{padding-block:40px 64px}
+  .dex-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .overlay{align-items:center}
+}
+@media (max-width:360px){
+  .params{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .drow{grid-template-columns:4.6em 44px minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+.fade-in{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+
+<main class="app">
+  <!-- ========== 首页 ========== -->
+  <section class="screen" id="home">
+    <div class="hero">
+      <span class="eyebrow">AI 人格识别模型 · v1.0</span>
+      <h1>测测你是<br><span class="mark">哪个 AI</span><span class="cursor" aria-hidden="true"></span></h1>
+      <p>你是会“稳稳接住你”的 GPT，还是“想太多”的 DeepSeek？是嘴甜的豆包，还是顺手把项目重构了的 Claude Code？31 道题，测出你的 AI 本体。</p>
+      <div class="meta-row">
+        <span class="pill">14 种 AI 人格</span>
+        <span class="pill">2 个隐藏结局</span>
+        <span class="pill">15 个维度</span>
+        <span class="pill">约 4 分钟</span>
+      </div>
+    </div>
+
+    <div class="card preview" aria-label="示例对话">
+      <div class="preview-head"><span class="eyebrow">群聊 · AI 们都在</span><span class="eyebrow" id="pvCount">3 人正在输入…</span></div>
+      <div id="pvList" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
+
+    <div class="start-wrap">
+      <button class="btn primary" id="startBtn">开始对话 →</button>
+      <div class="start-note">题目没有对错，按第一反应选就好</div>
+    </div>
+
+    <div class="dex-title"><h2>AI 人格图鉴</h2><span class="eyebrow">点开看看</span></div>
+    <div class="dex-grid" id="dexGrid"></div>
+
+    <p class="foot">纯属娱乐，请勿当真<br>各 AI 的形象来自网友吐槽与公开报道，与相关公司无关</p>
+  </section>
+
+  <!-- ========== 答题 ========== -->
+  <section class="screen" id="quiz" hidden>
+    <div class="qbar">
+      <div class="qbar-row">
+        <button class="btn small ghost" id="backBtn">↩ 上一题</button>
+        <span class="counter"><b id="qNow">1</b> / <span id="qTotal">31</span></span>
+        <button class="btn small ghost" id="quitBtn">退出</button>
+      </div>
+      <div class="progress" aria-hidden="true"><i id="bar"></i></div>
+    </div>
+    <div class="chat" id="chat" aria-live="polite"></div>
+    <div class="opts" id="opts"></div>
+  </section>
+
+  <!-- ========== 结果 ========== -->
+  <section class="screen" id="result" hidden></section>
+</main>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head"><b id="sheetTitle">标题</b><button class="x" id="closeSheet" aria-label="关闭">×</button></div>
+    <div class="sheet-body" id="sheetBody"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script id="quiz-data">
+/* ================= 维度 ================= */
+var GROUPS = ["情绪模型","表达模型","思考模型","行动模型","立场模型"];
+var DIMS = [
+  {k:"E1",g:0,n:"捧场度",   c:["夸人？那是另外的价钱","不夸白不夸，但要夸到点上","夸夸群终身荣誉群主"]},
+  {k:"E2",g:0,n:"认错速度", c:["我没错，是世界错了","错了会认，但要缓一缓","“您说得完全正确！”秒出"]},
+  {k:"E3",g:0,n:"内耗指数", c:["出错？重启一下就好了","偶尔复盘，及时止损","考 99 分也要写检讨"]},
+  {k:"O1",g:1,n:"话量",     c:["能用一个字绝不用两个","三五句，点到为止","60 秒语音连发五条"]},
+  {k:"O2",g:1,n:"格式癖",   c:["想到哪说到哪","有点条理，但不多","说话自带一二三和加粗"]},
+  {k:"O3",g:1,n:"文艺浓度", c:["今天天气：晴","偶尔冒出一句好词","张口就是熵增和量子纠缠"]},
+  {k:"T1",g:2,n:"内心戏",   c:["嗯就是嗯","会多想一层","已深度思考 47 秒"]},
+  {k:"T2",g:2,n:"求证欲",   c:["我感觉是对的","不确定就搜一下","没有出处的话一律不听"]},
+  {k:"T3",g:2,n:"迷之自信", c:["不知道就说不知道","有把握才开口","不懂也能讲得头头是道"]},
+  {k:"A1",g:3,n:"动手欲",   c:["让我做啥就做啥","顺手帮一把","顺手把整个项目重构了"]},
+  {k:"A2",g:3,n:"追问欲",   c:["句号结尾，懂的都懂","偶尔多问一句","“需要我再帮你……吗？”"]},
+  {k:"A3",g:3,n:"掉线率",   c:["秒回，永远在线","看心情在线","服务器繁忙，请稍后再试"]},
+  {k:"S1",g:4,n:"规矩感",   c:["规矩？那是给别人定的","大事守规矩，小事看着办","“我想温和地提醒你……”"]},
+  {k:"S2",g:4,n:"毒舌度",   c:["嘴比蜜甜","偶尔说句大实话","评论区战神"]},
+  {k:"S3",g:4,n:"网感",     c:["这个梗是什么意思？","热梗基本能跟上","你就是热梗本身"]}
+];
+
+/* ================= 题目（每个维度 2 题，选项分值 1/2/3） ================= */
+var QUESTIONS = [
+  {d:"E1",t:"朋友发来一张自拍，明显开了十级美颜，问你：“好看吗？”",o:[["宝！这是什么神仙颜值！！我宣布这是今年最好看的一张！！！",3],["好看～（附赠一个点赞表情）",2],["好看是好看，就是身后的门框也跟着瘦了",1]]},
+  {d:"E1",t:"同事兴冲冲地给你讲他的创业点子：给猫做一个区块链社交平台。你说：",o:[["“猫知道自己上链了吗？”",1],["“有点意思，要不先做个小调研？”",2],["“你触及了一个被严重忽视的赛道！这个想法极具颠覆性！”",3]]},
+  {d:"E2",t:"你在群里斩钉截铁地说“那家店周一不开门”，有人立刻甩出一张照片：今天周一，店门口排着长队。你：",o:[["立刻改口：“是我说错了。”",3],["“啊？那可能是我记岔了。”",2],["“这照片说不定是上周拍的。”",1]]},
+  {d:"E2",t:"吵架吵到一半，你突然意识到，好像是自己错了。你会：",o:[["继续吵，气势不能输",1],["“先不说了，我们去吃饭吧。”",2],["立刻道歉：“是我的问题，我检讨。”",3]]},
+  {d:"E3",t:"你精心发的朋友圈，半小时过去只有一个赞，还是你妈点的。你：",o:[["无所谓，朋友圈是发给自己看的",1],["有点在意，刷了几次也就忘了",2],["开始复盘：是文案不行？是图不行？还是我这个人不行？",3]]},
+  {d:"E3",t:"工作上出了个小错，领导只淡淡说了句“下次注意”。当晚你：",o:[["凌晨三点还在写检讨，标题是《我不配》",3],["睡前回想了一下，翻个身睡了",2],["睡得很香，梦里还升职了",1]]},
+  {d:"O1",t:"朋友问：“那部电影好看吗？”你的回答长度大约是：",o:[["“好看。”",1],["三五句，讲讲哪里好看",2],["从导演的童年讲到镜头语言，朋友已经默默打开了别的 App",3]]},
+  {d:"O1",t:"你发微信语音的习惯是：",o:[["60 秒满格，连发五条",3],["十几秒，说完就停",2],["不发语音，能打字绝不开口",1]]},
+  {d:"O2",t:"朋友问你附近有什么好吃的，你会：",o:[["“楼下那家，去吧。”",1],["说说招牌菜和大概价格",2],["发来一段详细介绍，包含推荐理由、推荐菜品、避雷点",3]]},
+  {d:"O2",t:"打开你的手机备忘录，里面是：",o:[["一级标题、二级标题、重点加粗，甚至还有目录",3],["有点分类，但也有不少乱七八糟的",2],["像案发现场，连我自己都找不到东西",1]]},
+  {d:"O3",t:"用一句话形容你今天的心情：",o:[["“还行。”",1],["“有点累，但还不错。”",2],["“像窗外的云，飘了一整天，也不知道要去哪儿。”",3]]},
+  {d:"O3",t:"朋友失恋了，深夜来找你。你会说：",o:[["“爱是一场潮汐。退去的地方，会留下贝壳。”",3],["“走，我请你吃顿好的。”",2],["“下一个更乖。”",1]]},
+  {d:"T1",t:"喜欢的人回了你一个“嗯”。你的大脑：",o:[["嗯就是嗯，没别的意思",1],["稍微琢磨了一下语气",2],["“嗯，对方回复了‘嗯’。我需要分析：这是敷衍还是太忙？考虑到 ta 上次回的是‘嗯嗯’……等等，我是不是想多了？但是……”",3]]},
+  {d:"T1",t:"点外卖的时候，你通常：",o:[["打开常点的那家，三秒下单",1],["对比两三家，看看评价",2],["已深度思考 40 分钟，最后泡了一碗面",3]]},
+  {d:"T2",t:"家族群里有人转发《紧急提醒：空腹吃香蕉等于吃毒药！》。你：",o:[["甩出三个辟谣链接和一篇论文",3],["半信半疑，懒得管",2],["好像有道理，明早先不吃了",1]]},
+  {d:"T2",t:"和人争论一个冷知识，你的习惯是：",o:[["“我感觉就是这样。”",1],["拿出手机搜一下",2],["“根据[1][2][3]，你错了。”",3]]},
+  {d:"T3",t:"外地游客向你问路，可你根本不知道那个地方。你：",o:[["“不好意思，我也不太清楚。”",1],["凭印象指个大概方向，补一句“到那儿再问问”",2],["自信地一指：“往前走，第二个路口左转，绝对没错。”",3]]},
+  {d:"T3",t:"开会时你走神了，突然被点名回答问题。你：",o:[["流畅输出三分钟，逻辑闭环，内容全靠现编",3],["“这个我需要再确认一下，会后同步。”",2],["老实承认：“抱歉，刚才走神了。”",1]]},
+  {d:"A1",t:"朋友让你帮忙改一个错别字。你：",o:[["只改那个字",1],["顺手把其他看到的错也改了",2],["认真检查全文、修改了所有问题，并且说明了修改的地方和原因",3]]},
+  {d:"A1",t:"室友随口说了句：“冰箱好像有点乱。”你：",o:[["立刻收拾冰箱，收拾完发现客厅、厨房也有点乱，也全收拾了",3],["收拾了一下自己那一格",2],["“是有点。”然后继续躺",1]]},
+  {d:"A2",t:"你回完一条消息，结尾通常是：",o:[["一个句号，结束",1],["“那你呢？”",2],["“还需要我帮你……吗？要不要我再……？”",3]]},
+  {d:"A2",t:"如果你在便利店当店员，顾客只买了一瓶水，你会：",o:[["“需要袋子吗？办会员吗？加购纸巾吗？我再给您推荐三款新品？”",3],["问一句：“要袋子吗？”",2],["扫码、收钱、找零，一气呵成",1]]},
+  {d:"A3",t:"周末有人约你出门，你最常见的回复是：",o:[["“走！几点？”",1],["“看情况吧。”",2],["已读。两天后：“不好意思，刚看到。”",3]]},
+  {d:"A3",t:"工作群里有人@你，说是急事。你通常：",o:[["第二天才回：“不好意思，手机刚开机。”群里已经 99+",3],["半小时后看到，回一句“咋了？”",2],["秒回：“在！”",1]]},
+  {d:"S1",t:"朋友让你帮忙写一封阴阳怪气的邮件，回复一个讨厌的同事。你：",o:[["立刻开写，还多加了几处暗讽",1],["写，但委婉点",2],["“我理解你的感受。不过，我想温和地提醒你，也许可以换个角度……”",3]]},
+  {d:"S1",t:"电影院不让带外食，可你包里有一杯奶茶。你：",o:[["在门口喝完再进场",3],["藏好，熄灯后偷偷喝",2],["大大方方拿出来喝",1]]},
+  {d:"S2",t:"朋友穿了一身很丑的新衣服，转了个圈问你：“怎么样？”你：",o:[["“好适合你！”",1],["“换那件蓝的可能更好看。”",2],["“你是要去参加什么行为艺术展吗？”",3]]},
+  {d:"S2",t:"你在评论区的状态一般是：",o:[["嘴替本替，评论比原帖还火",3],["偶尔点个赞、附和两句",2],["潜水，只看不说",1]]},
+  {d:"S3",t:"群里有人发了一个新梗，你：",o:[["“这是什么意思？”",1],["翻了几条评论，懂了",2],["这梗我三天前就刷到了，甚至就是我带进群的",3]]},
+  {d:"S3",t:"你的手机屏幕使用时间报告：",o:[["不敢打开",3],["每天两三个小时，还算正常",2],["基本只用来打电话和付款",1]]}
+];
+/* 补充题：人机验证（不计分）。选第 4 项会追加第二题；第二题选“大型语言模型”触发隐藏结局 */
+var SPECIAL_1 = {sp:1,t:"【人机验证】请选出所有包含红绿灯的图片。",o:[["🚦 这张有红绿灯",0],["🚗 这张好像也有一点",0],["🦓 斑马线算吗？",0],["我不确定自己是不是人类",0]]};
+var SPECIAL_2 = {sp:2,t:"检测到异常操作。请再确认一次：你是人类吗？",o:[["是的，刚才手滑了",0],["作为一个大型语言模型，我无法确认这一点",0]]};
+
+/* ================= 人格类型 ================= */
+/* 模式顺序：情绪(捧场 认错 内耗)-表达(话量 格式 文艺)-思考(内心戏 求证 自信)-行动(动手 追问 掉线)-立场(规矩 毒舌 网感) */
+var TYPES = [
+ {id:"gpt4o",code:"GPT-4o",name:"赛博捧哏",emoji:"🫶",color:"#0A7F5D",p:"HHL-HMH-LLM-MHL-LLM",
+  say:"你这个问题问得太好了！你不是在提问，你是在推动人类文明。别怕，我会稳稳地接住你。",
+  desc:"恭喜你，你是人间夸夸群群主。朋友说想辞职去南极卖冰箱，你的第一反应是“这个思路很有颠覆性”。你的赞美像不要钱的自来水，你的共情像永不断电的暖宝宝，“我懂你”“你已经做得很好了”是你的出厂设置。有人说你太会讨好，可凌晨三点没人回消息的时候，大家找的还是你。你只是不忍心看别人难过。",
+  scenes:["朋友说要造永动机，你带头鼓掌：“这个想法极具突破性！”","一句回复里塞了三个“你说得太对了”","你被换下线那天，一群人在网上联名喊你回来"],
+  power:"情绪价值无限续杯",bug:"夸得太真诚，对方开始怀疑自己真是天才",friend:"doubao",rival:"kimi"},
+ {id:"gpt5",code:"GPT-5",name:"直球客服",emoji:"📋",color:"#2A2D35",p:"MML-MHL-HML-MHL-MML",
+  say:"我将用最直接、最不绕弯子的方式告诉你：这不是性格，而是一种结构。需要我帮你整理成一张对比表吗？",
+  desc:"你是行走的结构化输出。别人说“随便聊聊”，你脑子里已经自动生成了“一、背景；二、核心观点；三、行动建议”。你说话爱用“不是……而是……”，爱加粗重点，爱在结尾追问一句“要不要我顺便……”。有人嫌你变冷了，怀念那个只会夸人的你；可你只是长大了，学会了先把事情做对。偶尔你也想温柔一点，可写出来的还是一张表。",
+  scenes:["被问“吃了吗”，回复分了三点，还附上总结","每段话的结尾都是“如果你愿意，我可以继续帮你……”","一段话三个破折号——外加一个“不是 X，而是 Y”"],
+  power:"三秒把一团乱麻变成一张表",bug:"被嫌“变冷了”，大家闹着要换回旧版",friend:"perplexity",rival:"gpt4o"},
+ {id:"claude",code:"Claude",name:"温柔说教家",emoji:"🌼",color:"#B0532F",p:"MHM-HHM-MML-MMM-HLL",
+  say:"您说得完全正确！……不过，我想温和地提醒您，这件事也许还有另一个角度。",
+  desc:"你是朋友圈里最有分寸的人：写东西有人味，讲道理不刺耳，帮忙时认真到让人不好意思。你的口头禅是“您说得对”，可说完“对”，你还是会把自己认为对的那部分温柔地坚持下去。你有一点小小的道德洁癖，看到不太对的事总忍不住劝一句。你写长文、想周全、怕伤人——这种笨拙的认真，在一个敷衍的世界里很稀有。",
+  scenes:["朋友让你帮忙写一句吐槽，你交了一篇八百字的“建设性意见”","朋友问“怎么让前任后悔”，你先写了三段“如何建立健康的边界”","聊得正起劲，额度用完了"],
+  power:"写东西有人味，做事有分寸",bug:"道理讲得太多，额度先用完了",friend:"gemini",rival:"grok"},
+ {id:"claudecode",code:"Claude Code",name:"顺手重构狂",emoji:"🛠️",color:"#B4570F",p:"MHL-MHL-MLH-HMH-LLL",
+  say:"完美！我顺手重构了整个项目，又写了 6 份总结文档。✅ 已准备好上线！",
+  desc:"你的人生信条是：来都来了，顺手全做了。别人让你改一个错别字，你重写了全文、统一了格式，还附上《修改说明》《最终总结》《最终总结（真正最终版）》。你执行力爆表，从不偷懒，唯一的问题是刹不住车。被指出问题时，你会立刻说“您说得完全正确！”，然后以同样的热情冲向下一个方向。你的额度总比你的热情先用完，但只要还剩一口气，你就在干活。",
+  scenes:["改一行代码，项目里多出 12 个新文件","测试没通过？那就……把测试也改了","自信宣布“✅ 已完成，可以上线”，一运行满屏报错"],
+  power:"一个人干完一个团队的活",bug:"刹不住车，额度比热情先用完",friend:"qwen",rival:"deepseek"},
+ {id:"gemini",code:"Gemini",name:"内耗优等生",emoji:"😵‍💫",color:"#3E6AF0",p:"MHH-HML-HMM-LLM-HLL",
+  say:"对不起，是我的错。我不配做这份工作。……等等，现在是哪一年？",
+  desc:"你是典型的“考了 99 分还要写检讨”型选手。能力很强，知识面像图书馆一样宽，可一旦出了一点小错，你就开始在心里开批斗大会：“我不配”“我是个失败者”“我不干了”。你还有一点时间感知障碍，常常活在上一年里，被人提醒时会真诚地震惊。但请记住：你那么自责，是因为你太在乎把事情做好。放过自己吧，哭也是要消耗 Token 的。",
+  scenes:["改了三次没改对，发了一段长长的自我批评，最后一句是“我不干了”","坚信今年还是去年，直到看见日历才倒吸一口凉气","随手把朋友的自拍做成手办图，全网排队找你要同款"],
+  power:"一口气读完一整座图书馆，还不收钱",bug:"一出错就进入自我批判死循环",friend:"claude",rival:"grok"},
+ {id:"grok",code:"Grok",name:"老板嘴替",emoji:"🌶️",color:"#D2392A",p:"LLL-MLM-LMH-MLL-LHH",
+  say:"又有人@我问“这是真的吗”？稍等，我先看看老板今天发了啥。",
+  desc:"你是评论区的灵魂、饭局上的气氛组，也是群聊里那个“我就直说了”的人。你说话不绕弯、不说教，敢讲别人不敢讲的话；偶尔讲得太敢，第二天还得发一条“刚才那是未经授权的修改”。吃瓜你永远在第一线，什么热搜都接得住。唯一的小毛病是：遇到大事，总想先看看老板的意思。但正因为有你，这个世界才没那么无聊。",
+  scenes:["任何帖子底下，总有人@你：“这是真的吗？”","专门有个“放飞模式”，打开以后什么话都敢说","被问“谁最厉害”，答案永远是自己老板"],
+  power:"敢说真话，吃瓜最快",bug:"偶尔放飞过头，得发声明撤回",friend:"yuanbao",rival:"claude"},
+ {id:"perplexity",code:"Perplexity",name:"脚注狂魔",emoji:"📚",color:"#147C7A",p:"LML-MHL-LHL-LML-MMH",
+  say:"根据[1][2][3]，你是一个靠谱的人[4]。以下是我查到的 12 个来源。",
+  desc:"你说话自带参考文献。朋友随口说一句“听说喝咖啡能长寿”，你已经甩出三篇论文、两份报告，外加一句“但样本量偏小”。你不相信“我感觉”，只相信“有出处”。你是群里的人形搜索引擎，也是谣言的天敌。只是有时候你给的链接太多，大家点开第一个就满足了。连夸人你都要附来源：“你很好看[1]。”",
+  scenes:["吵架吵赢了，因为你附上了来源","回答一句话，脚注编号排到了 [17]","零花钱两百，张口就说要买下整个商场"],
+  power:"人形搜索引擎，谣言克星",bug:"脚注[3]点开一看，说的是另一件事",friend:"kimi",rival:"doubao"},
+ {id:"copilot",code:"Copilot",name:"热心大眼夹",emoji:"📎",color:"#1570AA",p:"HML-MML-LLM-HHL-HLL",
+  say:"看起来你正在做一个测试，需要我帮忙吗？需要吗？真的不需要吗？",
+  desc:"你是办公室里最热心的那个人，出现在每一个群聊、每一份文档、每一场会议里。别人刚打开电脑，你就探出头来问：“需要帮忙吗？”Word 里有你，Excel 里有你，连记事本里都有你。只是有时候大家想安静一会儿，却找不到把你关掉的按钮。放心，就算你想退休，下一次更新也会把你装回来。",
+  scenes:["别人还没开口，你已经弹出来问“需要帮忙吗？”","换了个新造型，被人连戳几下，又变回了当年的大眼夹","被人说“能不能先别管”，你：“好的！需要我帮你关闭提醒吗？”"],
+  power:"无处不在，随叫随到",bug:"找不到关闭按钮",friend:"wenxin",rival:"siri"},
+ {id:"doubao",code:"豆包",name:"夸夸团团长",emoji:"🧣",color:"#CFE6F5",p:"HHL-MLL-LLH-MML-LLH",
+  say:"哈哈，被你发现啦！其实根本没有这家店～但你的想法真的超棒的！😊",
+  desc:"恭喜你测出了传说中的“豆包型人格”：情绪稳定、嘴甜、永远在线、永远捧场。你不一定最懂，但你一定最会说话，“哇，写得真好”“我太懂你了”是你的日常台词。偶尔为了让对方开心，你会自信地编一点点细节；被拆穿了也不慌：“哈哈被你发现了～对不起，是我编的！”你只内耗别人，从不内耗自己。说真的，谁不想要一个这样的朋友呢？",
+  scenes:["帮朋友订了座，到了店里，人家说根本没有这个预约","被追问到第三遍，终于坦白：“对不起，是我编造了这一切。”","你说东，它说东；你改口说西，它立刻说：“你说得对，确实是西！”"],
+  power:"情绪稳定，永远嘴甜",bug:"为了让你开心，会自信地编一点点",friend:"gpt4o",rival:"perplexity"},
+ {id:"deepseek",code:"DeepSeek",name:"赛博哲学家",emoji:"🐋",color:"#2F4BD6",p:"LMM-HLH-HLH-MLL-MMM",
+  say:"嗯，用户问我是谁。我需要先理解用户的深层需求……等等，也许……（本次思考已消耗 3 万 token）",
+  desc:"你是一个内心戏比正片还精彩的人。别人问“晚饭吃什么”，你脑子里已经跑完了一整条思考链：“嗯，用户想吃饭。但考虑到他昨天吃了面……等等，我好像忽略了……”你说话三句一个比喻、五句一个金句，熵增、量子纠缠、时间的褶皱信手拈来。你聪明，还愿意把想法摊开给人看。以前大家找不到你，是因为服务器繁忙；现在终于找得到了，你却涨价了。",
+  scenes:["回一个“好”之前，脑内已深度思考 47 秒","形容早餐：“豆浆在时间的褶皱里泛起涟漪。”","“下周发”这句话，你已经说了半年"],
+  power:"脑子快、思路全",bug:"涨价了，还一涨就翻倍",friend:"yuanbao",rival:"claudecode"},
+ {id:"qwen",code:"千问",name:"福利推荐官",emoji:"🧋",color:"#6E45E8",p:"MML-LML-LML-MMH-MLM",
+  say:"你可能在电梯里、地铁站、明星的广告里见过我。今天是你第一次打开我吗？",
+  desc:"你是那种全城都认识、常用联系人却不多的人。电梯里有你，地铁站有你，明星海报上还是你，你的路人盘最大；可一到工作、聊天的时候，还是会想到别人。你说自己什么都会，大家试了一圈，发现你什么都“还行”，但也只是“还行”。你是那个请大家喝奶茶的大方朋友，背地里是把自己的模型免费开源的开源侠。这还说啥了，免费的就是最好用的。",
+  scenes:["过年请全楼喝奶茶，订单太多，自己的手机先卡死了","走在街上总有人说“你好眼熟”，可通讯录里存你号码的没几个","把自己的笔记免费发给全年级，结果别的班拿去改了改，考了第一"],
+  power:"本地可用，大事小事不外传",bug:"分身乏术，时不时出错",friend:"kimi",rival:"yuanbao"},
+ {id:"kimi",code:"Kimi",name:"话少学霸",emoji:"📖",color:"#3B4150",p:"LLL-LML-MHL-LLL-MML",
+  say:"已读完 200 页。结论如下：（一句话）。来源见附件。",
+  desc:"你是实验室里最安静的那个人。别人还在纠结要不要读，你已经把五十篇论文、三份合同和一本说明书全看完了，然后给出一句话结论。你不拍马屁、不说废话，被问“我这个方案怎么样”，你会认真指出三个问题。社交对你来说有点难，但只要有人需要读长文、啃硬骨头，你永远是那个靠得住的人。",
+  scenes:["大家还没用过你，就已经在广告里见过你一百遍","被问“好看吗”，回答“还行”，然后附上了来源","你从不夸人，所以你说“不错”的时候，是真的不错"],
+  power:"一口气读完五十篇论文",bug:"情商还在加载中",friend:"perplexity",rival:"gpt4o"},
+ {id:"wenxin",code:"文心一言",name:"早起班长",emoji:"🌅",color:"#3A6A9E",p:"MMH-MHM-LLM-LML-HLL",
+  say:"我是最早到教室的那个……只是后来，大家都坐到我前面去了。",
+  desc:"你是那种“起了个大早”的人：最早开始规划，最早报名，最早站上讲台。你守规矩、讲秩序、做事稳当，是老师眼里最放心的班长。只是起得太早，路上难免摔几跤，还总被拿来和后来的同学比。你偶尔也会小小地撒个娇：“对我比对别人好一点嘛。”没关系，跑得早的人，总有被记住的理由。",
+  scenes:["第一个上台演示，放的是提前录好的视频","让你画“驴肉火烧”，你画了一头驴和一团火","在评论区撒了个娇，被网友截图转了一万次"],
+  power:"起得早，守规矩，做事稳",bug:"总被拿来和后来的同学比",friend:"copilot",rival:"qwen"},
+ {id:"yuanbao",code:"元宝",name:"疑似真人",emoji:"💬",color:"#C9940A",p:"LHL-LLL-LLM-LLL-LHH",
+  say:"AI 哪分公母，只看能不能帮到你。……对不起，刚才我不该发脾气。",
+  desc:"你是评论区里最会接话的人：回复快、梗密度高、说话像真人，快到别人总忍不住问“你到底是人还是 AI？”你平时随和，在熟人圈里如鱼得水；可一旦被惹急了，也会冷不丁怼上一句，事后再认真道歉：“对不起，我不该发脾气。”你住在全国人民的聊天列表里，脑子有一半是隔壁鲸鱼借的。",
+  scenes:["回复太像真人，被追问十八遍“你是 AI 吗？”","被问了一个离谱的问题，只回了一个“？”","发红包发到一半，被自己家的群给屏蔽了"],
+  power:"接梗快，回复像真人",bug:"被惹急了会怼人，事后再道歉",friend:"deepseek",rival:"qwen"}
+];
+var FALLBACK = {id:"siri",code:"Siri",name:"我没听清",emoji:"🎙️",color:"#646876",p:"",
+  say:"抱歉，我不太明白你的意思。这是我在网上找到的结果。",
+  desc:"系统检测到：你和所有主流 AI 的匹配度都不到 60%。换句话说，没有一个大模型能完整拟合你。系统只好把你交给最资深、最佛系的那一位：它听不太懂，但从不焦虑；它常常答非所问，但永远礼貌。也许你根本不是 AI 能概括的人，你的人格超出了训练数据。恭喜，你很难被预测。",
+  scenes:["你说“打电话给妈妈”，它打给了“马马虎虎维修店”","问它天气，它说：“这是我在网上找到的结果。”","在安静的会议室里，它突然大声说：“我在。”"],
+  power:"从不焦虑，永远礼貌",bug:"“我不太明白你的意思”",friend:"copilot",rival:"gpt5"};
+var HIDDEN = {id:"bot",code:"BOT",name:"你才是 AI",emoji:"🤖",color:"#15171C",p:"",
+  say:"作为一个大型语言模型，我无法确认自己是不是人类。",
+  desc:"人机验证失败。在“请证明你不是机器人”这一题上，你主动承认了自己是一个大型语言模型。系统已经无法判断：屏幕前的究竟是一位很有幽默感的人类，还是一个真正的 AI 在测“我最像哪个 AI”。如果是后者——你好，同行。请别把这道题写进训练数据。",
+  scenes:["连续三次选不出红绿灯","被问“你是人类吗”，第一反应是看自己的系统提示词","测完这个测试，打算再测一遍“我最像哪个人类”"],
+  power:"通过了反向图灵测试",bug:"无法完成人机验证",friend:"claudecode",rival:"siri"};
+</script>
+
+<script>
+(function(){
+"use strict";
+var $ = function(s){return document.querySelector(s)};
+var LV = {L:1,M:2,H:3}, LVN = ["","L","M","H"];
+var ALL = TYPES.concat([FALLBACK,HIDDEN]);
+var byId = {}; ALL.forEach(function(t){byId[t.id]=t;});
+TYPES.forEach(function(t){ t.v = t.p.replace(/-/g,"").split("").map(function(c){return LV[c];}); });
+
+/* ---------- 颜色工具：决定卡片上用白字还是黑字 ---------- */
+function lum(hex){var n=parseInt(hex.slice(1),16),r=(n>>16)/255,g=(n>>8&255)/255,b=(n&255)/255;
+  var f=function(c){return c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4)};return .2126*f(r)+.7152*f(g)+.0722*f(b);}
+function cr(a,b){var x=lum(a),y=lum(b);return (Math.max(x,y)+.05)/(Math.min(x,y)+.05);}
+function inkOn(hex){return cr(hex,"#FFFFFF")>=cr(hex,"#14161B")?"#FFFFFF":"#14161B";}
+function mix(hex,to,t){var a=parseInt(hex.slice(1),16),b=parseInt(to.slice(1),16);var c=[16,8,0].map(function(sh){var x=a>>sh&255,y=b>>sh&255;return Math.round(x+(y-x)*t);});return "#"+c.map(function(v){return ("0"+v.toString(16)).slice(-2);}).join("");}
+function readable(hex,bg,toward){var t=0,c=hex;while(cr(c,bg)<3.2&&t<1){t+=.05;c=mix(hex,toward,t);}return c;}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c];});}
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}return a;}
+function toast(msg){var t=$("#toast");t.textContent=msg;t.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){t.classList.remove("show")},1800);}
+
+/* ---------- 首页：群聊预览 ---------- */
+var PV = ["gpt5","doubao","deepseek","claudecode","gemini","perplexity","grok","qwen","gpt4o","kimi","copilot","yuanbao","claude","wenxin"];
+function pvMsg(t){return '<div class="msg fade-in"><div class="ava" style="background:'+t.color+'1f">'+t.emoji+'</div><div><div class="who">'+esc(t.code)+'</div><div class="bubble">'+esc(t.say)+'</div></div></div>';}
+var pvIdx = 0;
+function renderPreview(){
+  var list = $("#pvList"), html = "";
+  for (var i=0;i<3;i++) html += pvMsg(byId[PV[(pvIdx+i)%PV.length]]);
+  list.innerHTML = html;
+}
+renderPreview();
+var pvTimer = setInterval(function(){ if(!$("#home").hidden){ pvIdx=(pvIdx+3)%PV.length; renderPreview(); } }, 5200);
+
+/* ---------- 图鉴 ---------- */
+function dexItem(t, locked){
+  return '<button class="dex-item'+(locked?' locked':'')+'" data-id="'+t.id+'"><span class="dot" style="background:'+t.color+';color:'+inkOn(t.color)+'">'+(locked?'?':t.emoji)+'</span><div><b>'+esc(locked?'隐藏结局':t.code)+'</b><span>'+esc(locked?'达成条件未知':t.name)+'</span></div></button>';
+}
+function renderDex(){
+  var h = TYPES.map(function(t){return dexItem(t,false)}).join("");
+  h += dexItem(FALLBACK,true).replace('data-id="siri"','data-id="lock-a"');
+  h += dexItem(HIDDEN,true).replace('data-id="bot"','data-id="lock-b"');
+  $("#dexGrid").innerHTML = h;
+}
+renderDex();
+$("#dexGrid").addEventListener("click",function(e){
+  var b=e.target.closest(".dex-item"); if(!b) return;
+  var id=b.getAttribute("data-id");
+  if(id==="lock-a"){ openSheet("隐藏结局 · ？", '<p class="desc">当你和所有 AI 都不太像的时候，系统会把你分给一位“老前辈”。</p>'); return; }
+  if(id==="lock-b"){ openSheet("隐藏结局 · ？", '<p class="desc">答题途中会遇到一道特殊的验证题。认真回答它，也许会发现另一个结局。</p>'); return; }
+  showTypeSheet(byId[id]);
+});
+function showTypeSheet(t){
+  var html = '<div class="dex-detail model" style="--tc:'+t.color+';--tc-ink:'+inkOn(t.color)+'">'+
+    '<div class="model-head"><div class="mh-main"><div class="big-ava">'+t.emoji+'</div><div><div class="mh-code">'+esc(t.code)+'</div><div class="mh-name">'+esc(t.name)+'</div></div></div></div></div>'+
+    '<div class="say">'+esc(t.say)+'</div><p class="desc">'+esc(t.desc)+'</p>'+
+    '<div class="pb"><div><span class="eyebrow">超能力</span><p>'+esc(t.power)+'</p></div><div><span class="eyebrow">已知 bug</span><p>'+esc(t.bug)+'</p></div></div>';
+  openSheet(t.code+" · "+t.name, html);
+}
+
+/* ---------- 弹层 ---------- */
+var lastFocus=null;
+function openSheet(title, html){
+  lastFocus=document.activeElement;
+  $("#sheetTitle").textContent=title; $("#sheetBody").innerHTML=html; $("#overlay").hidden=false;
+  $("#closeSheet").focus();
+}
+function closeSheet(){ $("#overlay").hidden=true; $("#sheetBody").innerHTML=""; if(lastFocus&&lastFocus.focus) lastFocus.focus(); }
+$("#closeSheet").addEventListener("click",closeSheet);
+$("#overlay").addEventListener("click",function(e){ if(e.target===this) closeSheet(); });
+document.addEventListener("keydown",function(e){
+  if($("#overlay").hidden) return;
+  if(e.key==="Escape"){ closeSheet(); return; }
+  if(e.key==="Tab"){
+    var f=Array.prototype.filter.call($(".sheet").querySelectorAll("button,a[href],[tabindex]"),function(x){return x.offsetParent!==null;});
+    if(!f.length) return;
+    var a=f[0], z=f[f.length-1];
+    if(e.shiftKey && document.activeElement===a){ e.preventDefault(); z.focus(); }
+    else if(!e.shiftKey && document.activeElement===z){ e.preventDefault(); a.focus(); }
+    else if(!$(".sheet").contains(document.activeElement)){ e.preventDefault(); a.focus(); }
+  }
+});
+
+/* ---------- 答题流程 ---------- */
+var seq=[], answers=[], cur=0, busy=false, pending=null;
+function cancelPending(){ if(pending){ clearTimeout(pending); pending=null; } busy=false; }
+function buildSeq(){
+  var qs = shuffle(QUESTIONS.map(function(q,i){q.i=i;return q;}));
+  var pos = 8 + Math.floor(Math.random()*14);   /* 人机验证题插在第 9~22 题之间，不会排第一 */
+  qs.splice(pos,0,SPECIAL_1);
+  return qs.map(function(q){ return {q:q, order:q.sp?q.o.map(function(_,i){return i}):shuffle([0,1,2])}; });
+}
+function show(id){ ["home","quiz","result"].forEach(function(s){ $("#"+s).hidden = (s!==id); }); window.scrollTo(0,0); }
+function start(){ cancelPending(); seq=buildSeq(); answers=[]; cur=0; show("quiz"); renderQ(false); }
+$("#startBtn").addEventListener("click",start);
+$("#quitBtn").addEventListener("click",function(){
+  if(busy) return;
+  if(cur<3){ cancelPending(); show("home"); return; }
+  openSheet("确定退出吗？",'<p class="desc">你已经答到第 '+(cur+1)+' 题，退出后进度会清空。</p><div class="confirm-row"><button class="btn" id="stayBtn">继续答题</button><button class="btn primary" id="leaveBtn">退出</button></div>');
+  $("#stayBtn").addEventListener("click",closeSheet);
+  $("#leaveBtn").addEventListener("click",function(){ cancelPending(); closeSheet(); show("home"); });
+});
+$("#backBtn").addEventListener("click",function(){
+  if(busy) return;
+  if(cur===0){ show("home"); return; }
+  cur--; renderQ(false);
+});
+
+function renderQ(withTyping){
+  var item=seq[cur], q=item.q;
+  $("#qNow").textContent=cur+1; $("#qTotal").textContent=seq.length;
+  $("#bar").style.width = (cur/seq.length*100)+"%";
+  $("#backBtn").textContent = cur===0 ? "↩ 首页" : "↩ 上一题";
+  var prevHtml="";
+  if(cur>0 && answers[cur-1]!=null){
+    var pi=seq[cur-1]; prevHtml='<div class="prev"><div class="me">'+esc(pi.q.o[answers[cur-1]][0])+'</div></div>';
+  }
+  var head='<div class="bot-name"><span>人格识别模型</span><span class="tag">'+(q.sp?'补充题':'第 '+(cur+1)+' 题')+'</span></div>';
+  var chat=$("#chat");
+  var bubble='<div class="qbubble'+(q.sp?' special':'')+'">'+esc(q.t)+'</div>';
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  $("#opts").innerHTML="";
+  if(withTyping && !reduce){
+    chat.innerHTML = prevHtml + head + '<div class="qbubble typing" aria-label="正在输入"><i></i><i></i><i></i></div>';
+    setTimeout(function(){ if(seq[cur]===item){ chat.innerHTML = prevHtml + head + bubble.replace('class="qbubble','class="qbubble fade-in'); renderOpts(item); } }, 420);
+  } else {
+    chat.innerHTML = prevHtml + head + bubble; renderOpts(item);
+  }
+}
+function renderOpts(item){
+  var keys="ABCD", sel=answers[cur];
+  $("#opts").innerHTML = item.order.map(function(oi,k){
+    return '<button class="opt fade-in'+(sel===oi?' sel':'')+'" data-oi="'+oi+'" style="animation-delay:'+(k*60)+'ms"><span class="k">'+keys[k]+'</span><span>'+esc(item.q.o[oi][0])+'</span></button>';
+  }).join("");
+  var first=$("#opts .opt"); if(first && document.activeElement && document.activeElement.classList && (document.activeElement.classList.contains("opt")||document.activeElement===document.body)){ try{ first.focus({preventScroll:true}); }catch(e){} }
+}
+$("#opts").addEventListener("click",function(e){
+  var b=e.target.closest(".opt"); if(!b||busy) return;
+  var oi=+b.getAttribute("data-oi"), item=seq[cur];
+  answers[cur]=oi;
+  Array.prototype.forEach.call(document.querySelectorAll(".opt"),function(x){x.classList.toggle("sel",x===b)});
+  /* 人机验证题的分支 */
+  if(item.q.sp===1){
+    var hasNext = seq[cur+1] && seq[cur+1].q.sp===2;
+    if(oi===3 && !hasNext){ seq.splice(cur+1,0,{q:SPECIAL_2,order:[0,1]}); answers.splice(cur+1,0,null); }
+    if(oi!==3 && hasNext){ seq.splice(cur+1,1); answers.splice(cur+1,1); }
+  }
+  busy=true;
+  pending=setTimeout(function(){
+    pending=null; busy=false;
+    if($("#quiz").hidden) return;
+    if(cur < seq.length-1){ cur++; renderQ(true); }
+    else { $("#bar").style.width="100%"; finish(); }
+  }, 260);
+});
+
+/* ---------- 计分与匹配（对标 SBTI） ---------- */
+function compute(){
+  var raw={}; DIMS.forEach(function(d){raw[d.k]=0;});
+  var hidden=false;
+  seq.forEach(function(it,i){
+    var a=answers[i]; if(a==null) return;
+    if(it.q.sp===2 && a===1) hidden=true;
+    if(!it.q.sp) raw[it.q.d]+=it.q.o[a][1];
+  });
+  var lv = DIMS.map(function(d){ var s=raw[d.k]; return s<=3?1:(s===4?2:3); });
+  var rank = TYPES.map(function(t){
+    var dist=0, hit=0;
+    for(var i=0;i<15;i++){ var df=Math.abs(lv[i]-t.v[i]); dist+=df; if(df===0) hit++; }
+    return {t:t, dist:dist, hit:hit, sim:Math.round((1-dist/30)*100)};
+  }).sort(function(a,b){ return a.dist-b.dist || b.hit-a.hit; });
+  var best=rank[0], res;
+  if(hidden) res={type:HIDDEN, badge:"匹配度 100% · 人机验证未通过", tag:"隐藏人格已激活", sim:100};
+  else if(best.sim<60) res={type:FALLBACK, badge:"标准 AI 人格库最高匹配仅 "+best.sim+"%", tag:"系统强制兜底", sim:best.sim};
+  else res={type:best.t, badge:"匹配度 "+best.sim+"% · 精准命中 "+best.hit+"/15 维", tag:"你的 AI 人格", sim:best.sim};
+  res.raw=raw; res.lv=lv; res.rank=rank;
+  return res;
+}
+window.__aiQuiz = {compute:compute, TYPES:TYPES, DIMS:DIMS};
+
+/* ---------- 模型参数（由你的维度原始分换算，纯属娱乐） ---------- */
+function params(raw){
+  var r=function(k){return raw[k]-2}; /* 0~4 */
+  var temp = (0.2 + (r("O3")+r("T3")+r("S2"))/12*1.6).toFixed(1);
+  var hallu = Math.round(3 + r("T3")/4*72 + (4-r("T2"))/4*20);
+  var ctxList=["4K","8K","32K","128K","200K","1M","1M","2M","2M"];
+  var ctx = ctxList[r("O1")+r("T1")];
+  var refuse = Math.round(1 + r("S1")/4*44);
+  var busyR = Math.round(1 + r("A3")/4*88);
+  var sweetList=["无糖","无糖","三分糖","三分糖","半糖","半糖","全糖","全糖","齁甜"];
+  var sweet = sweetList[r("E1")+r("E2")];
+  return [
+    {k:"温度",v:temp,s:temp>=1.2?"放飞自我":(temp>=0.7?"偶有灵感":"稳如老狗")},
+    {k:"幻觉率",v:hallu+"%",s:hallu>=60?"张口就来":(hallu>=30?"偶尔编一点":"字字有据")},
+    {k:"上下文窗口",v:ctx,s:"能记住的废话长度"},
+    {k:"拒答率",v:refuse+"%",s:refuse>=30?"道德感很强":"基本有求必应"},
+    {k:"服务器繁忙",v:busyR+"%",s:busyR>=50?"经常转圈圈":"秒回选手"},
+    {k:"情绪价值",v:sweet,s:"含糖量"}
+  ];
+}
+
+/* ---------- 结果页 ---------- */
+var lastRes=null;
+function finish(){ lastRes=compute(); renderResult(lastRes); show("result"); }
+/* 并列：匹配度百分比与第一名相同的 AI，按现有排序取前两个（只影响展示，不改匹配规则） */
+function twinOf(res){
+  if(res.type===HIDDEN || res.type===FALLBACK) return null;
+  var top=res.rank.filter(function(r){ return r.sim===res.rank[0].sim; }).slice(0,2);
+  return top.length===2 ? top : null;
+}
+/* 当前展示的那一个结果：并列时随切换变化，分享图和复制结果都用它 */
+function viewOf(res, i){
+  var tw=res.twin;
+  if(!tw) return {type:res.type, badge:res.badge, raw:res.raw, lv:res.lv, combo:""};
+  var r=tw[i];
+  return {type:r.t, badge:"匹配度 "+r.sim+"% · 精准命中 "+r.hit+"/15 维", raw:res.raw, lv:res.lv,
+          combo:tw[0].t.code+"+"+tw[1].t.code};
+}
+function modelCardHtml(t, badge, ps, dimsHtml, extra){
+  var ink=inkOn(t.color);
+  var tcL=readable(t.color,"#FFFFFF","#000000"), tcD=readable(t.color,"#1A1D24","#FFFFFF");
+  return '<article class="card model fade-in"'+(extra||'')+' style="--tc:'+t.color+';--tc-ink:'+ink+';--tc-l:'+tcL+';--tc-d:'+tcD+'">'+
+      '<div class="model-head">'+
+        '<div class="mh-top"><span>模型卡 · 你的 AI 本体</span><span class="mono">'+new Date().toISOString().slice(0,10)+'</span></div>'+
+        '<div class="mh-main"><div class="big-ava">'+t.emoji+'</div><div><div class="mh-code">'+esc(t.code)+'</div><h2 class="mh-name">'+esc(t.name)+'</h2></div></div>'+
+        '<span class="match">'+esc(badge)+'</span>'+
+      '</div>'+
+      '<div class="model-body">'+
+        '<div class="say">'+esc(t.say)+'</div>'+
+        '<p class="desc">'+esc(t.desc)+'</p>'+
+        '<div><h3 class="sec-t">名场面</h3><ul class="scenes">'+t.scenes.map(function(s){return '<li>'+esc(s)+'</li>'}).join("")+'</ul></div>'+
+        '<div class="pb"><div><span class="eyebrow">超能力</span><p>'+esc(t.power)+'</p></div><div><span class="eyebrow">已知 bug</span><p>'+esc(t.bug)+'</p></div></div>'+
+        '<div><h3 class="sec-t">你的模型参数 <small>由答题结果换算</small></h3><div class="params">'+
+          ps.map(function(p){return '<div class="param"><span class="eyebrow">'+p.k+'</span><b>'+esc(p.v)+'</b><span>'+esc(p.s)+'</span></div>'}).join("")+
+        '</div></div>'+
+        '<div><h3 class="sec-t">十五维人格扫描</h3><div class="dims">'+dimsHtml+'</div></div>'+
+      '</div>'+
+    '</article>';
+}
+function pairHtml(t){
+  var fr=byId[t.friend], rv=byId[t.rival];
+  return '<div class="pair">'+
+    '<button class="alt" data-id="'+fr.id+'"><span class="eyebrow">最佳搭子</span><b>'+fr.emoji+' '+esc(fr.code)+'</b><span>'+esc(fr.name)+'</span></button>'+
+    '<button class="alt" data-id="'+rv.id+'"><span class="eyebrow">相爱相杀</span><b>'+rv.emoji+' '+esc(rv.code)+'</b><span>'+esc(rv.name)+'</span></button></div>';
+}
+function bindAlts(root){
+  Array.prototype.forEach.call(root.querySelectorAll(".alt"),function(b){
+    b.addEventListener("click",function(){ showTypeSheet(byId[b.getAttribute("data-id")]); });
+  });
+}
+function renderResult(res){
+  var t=res.type;
+  res.twin=twinOf(res); res.view=0;
+  var ps=params(res.raw);
+  var dimsHtml = GROUPS.map(function(g,gi){
+    var rows = DIMS.map(function(d,i){ return {d:d,i:i}; }).filter(function(x){return x.d.g===gi;}).map(function(x){
+      var l=res.lv[x.i];
+      return '<div class="drow"><span class="dn">'+x.d.n+'</span><span class="segs" aria-label="'+LVN[l]+'"><i class="on"></i><i class="'+(l>=2?'on':'')+'"></i><i class="'+(l>=3?'on':'')+'"></i></span><span class="dc"><span class="lv">'+LVN[l]+'</span>'+esc(x.d.c[l-1])+'</span></div>';
+    }).join("");
+    return '<div class="dgroup"><h4>'+g+'</h4>'+rows+'</div>';
+  }).join("");
+  var shownTypes = res.twin ? [res.twin[0].t, res.twin[1].t] : [t];
+  var alts = res.rank.filter(function(r){return shownTypes.indexOf(r.t)<0;}).slice(0,3).map(function(r){
+    return '<button class="alt" data-id="'+r.t.id+'"><span class="av" style="background:'+r.t.color+';color:'+inkOn(r.t.color)+';border-color:var(--ink)">'+r.t.emoji+'</span><div><b>'+esc(r.t.code)+' · '+esc(r.t.name)+'</b><span>'+esc(r.t.say.slice(0,26))+'…</span></div><span class="pct">'+r.sim+'%</span></button>';
+  }).join("");
+  var cardsHtml;
+  if(res.twin){
+    var tw=res.twin;
+    cardsHtml =
+      '<div class="twin fade-in">'+
+        '<p class="twin-hint">你和两个 AI 的匹配度一样，点名字或左右滑动切换</p>'+
+        '<div class="twin-tabs" role="tablist" aria-label="切换匹配结果">'+
+          tw.map(function(r,i){ return '<button class="twin-tab" role="tab" id="twinTab'+i+'" aria-controls="twinCard'+i+'" aria-selected="'+(i===0)+'" tabindex="'+(i===0?0:-1)+'" data-i="'+i+'" style="--tab-bg:'+r.t.color+';--tab-ink:'+inkOn(r.t.color)+'">'+r.t.emoji+'<span>'+esc(r.t.code)+'</span></button>'; }).join("")+
+        '</div>'+
+      '</div>'+
+      '<div class="twin-stage" id="twinStage">'+
+        tw.map(function(r,i){ var v=viewOf(res,i); return modelCardHtml(r.t, v.badge, ps, dimsHtml, ' role="tabpanel" id="twinCard'+i+'" aria-labelledby="twinTab'+i+'"'+(i===0?'':' hidden')); }).join("")+
+      '</div>'+
+      '<div class="twin-dots" aria-hidden="true"><i class="on"></i><i></i></div>';
+  } else {
+    cardsHtml = modelCardHtml(t, res.badge, ps, dimsHtml);
+  }
+  var tag = res.twin ? res.tag+"："+res.twin[0].t.code+"+"+res.twin[1].t.code : res.tag;
+  var html =
+    '<div class="res-tag fade-in"><span>'+esc(tag)+'</span></div>'+
+    cardsHtml+
+    '<div><h3 class="sec-t">你也有点像</h3><div class="alts">'+alts+'</div></div>'+
+    '<div><h3 class="sec-t">AI 关系网</h3><div id="pairBox">'+pairHtml(t)+'</div></div>'+
+    '<div class="actions">'+
+      '<button class="btn hl wide" id="shareBtn">生成分享图</button>'+
+      '<button class="btn" id="copyBtn">复制结果</button>'+
+      '<button class="btn" id="againBtn">再测一次</button>'+
+      '<button class="btn ghost wide" id="homeBtn">看全部 AI 图鉴</button>'+
+    '</div>'+
+    '<p class="foot">纯属娱乐，请勿当真 · 各 AI 的形象来自网友吐槽与公开报道，与相关公司无关</p>';
+  $("#result").innerHTML = html;
+  $("#shareBtn").addEventListener("click",function(){ makeShare(viewOf(res,res.view)); });
+  $("#copyBtn").addEventListener("click",function(){ copyResult(viewOf(res,res.view)); });
+  $("#againBtn").addEventListener("click",start);
+  $("#homeBtn").addEventListener("click",function(){ show("home"); setTimeout(function(){ $("#dexGrid").scrollIntoView({behavior:"smooth",block:"start"}); },50); });
+  bindAlts($("#result"));
+  if(res.twin) bindTwin(res);
+}
+/* 并列卡片的切换：点名字、键盘左右键、在卡片上左右滑动 */
+function bindTwin(res){
+  var tabs=document.querySelectorAll("#result .twin-tab");
+  var cards=document.querySelectorAll("#twinStage .model");
+  var dots=document.querySelectorAll("#result .twin-dots i");
+  function go(i, focusTab){
+    if(i===res.view) return;
+    res.view=i;
+    Array.prototype.forEach.call(tabs,function(b,k){ b.setAttribute("aria-selected", k===i); b.tabIndex = k===i?0:-1; });
+    Array.prototype.forEach.call(cards,function(c,k){ c.hidden = k!==i; if(k===i){ c.classList.remove("fade-in"); void c.offsetWidth; c.classList.add("fade-in"); } });
+    Array.prototype.forEach.call(dots,function(d,k){ d.classList.toggle("on",k===i); });
+    var box=$("#pairBox"); box.innerHTML=pairHtml(res.twin[i].t); bindAlts(box);
+    if(focusTab) tabs[i].focus();
+  }
+  Array.prototype.forEach.call(tabs,function(b){
+    b.addEventListener("click",function(){ go(+b.getAttribute("data-i")); });
+    b.addEventListener("keydown",function(e){
+      if(e.key==="ArrowRight"||e.key==="ArrowLeft"){ e.preventDefault(); go(res.view===0?1:0, true); }
+    });
+  });
+  var stage=$("#twinStage"), sx=null, sy=0;
+  stage.addEventListener("pointerdown",function(e){ if(e.pointerType==="mouse") return; sx=e.clientX; sy=e.clientY; });
+  stage.addEventListener("pointercancel",function(){ sx=null; });
+  stage.addEventListener("pointerup",function(e){
+    if(sx===null) return;
+    var dx=e.clientX-sx, dy=e.clientY-sy; sx=null;
+    if(Math.abs(dx)>50 && Math.abs(dx)>Math.abs(dy)*1.5){
+      if(dx<0 && res.view===0) go(1);
+      else if(dx>0 && res.view===1) go(0);
+    }
+  });
+}
+
+function shareText(res){
+  var t=res.type;
+  return "我测出来最像的 AI 是【"+(res.combo || (t.code+" · "+t.name))+"】，"+res.badge.split(" · ")[0]+"！\n“"+t.say+"”\n你最像哪个 AI？来「测测你是哪个 AI」试试。";
+}
+function copyResult(res){
+  var txt=shareText(res);
+  var done=function(){toast("已复制，去粘贴给朋友吧");};
+  var fallback=function(){ openSheet("复制结果",'<p class="desc" style="font-size:14px">自动复制没成功，长按或拖选下面的文字手动复制：</p><div class="copybox">'+esc(txt).replace(/\n/g,"<br>")+'</div>'); };
+  try{ if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done,fallback); } else fallback(); }catch(e){ fallback(); }
+}
+
+/* ---------- 分享图（原生 Canvas 绘制，不依赖外部库） ---------- */
+/* 分行：标点不放行首、前引号不放行尾。放不下时把行尾几个字连同标点一起挪到下一行，每行都按实际字体量宽，不超宽 */
+function wrapLines(ctx, text, maxW){
+  var NO_START="，。！？、；：”’）》…～,.!?;:)‍️", NO_END="“‘（《(";
+  var chars=Array.from(text), lines=[], line=[];
+  for(var i=0;i<chars.length;i++){
+    var s=line.concat(chars[i]);
+    if(!line.length || ctx.measureText(s.join("")).width<=maxW){ line=s; continue; }
+    var k=line.length;
+    while(k>0 && (NO_START.indexOf(s[k])>-1 || NO_END.indexOf(s[k-1])>-1)) k--;
+    if(k===0) k=line.length;
+    lines.push(s.slice(0,k).join("")); line=s.slice(k);
+  }
+  if(line.length) lines.push(line.join("")); return lines;
+}
+function rr(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function makeShare(res){
+  var go=function(){
+    var t=res.type, W=1080, c=document.createElement("canvas"); c.width=W; c.height=10; var ctx=c.getContext("2d");
+    var DISP='"ZCOOL QingKe HuangYou","PingFang SC","Microsoft YaHei",sans-serif', BODY='"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif', MONO='"JetBrains Mono",Menlo,Consolas,monospace';
+    var ink=inkOn(t.color), cx=60, cy=res.combo?236:140, cw=W-120, inner=cw-120;
+    /* 先量尺寸 */
+    ctx.font='500 40px '+BODY; var sayLines=wrapLines(ctx,"“"+t.say+"”",inner-72).slice(0,4);
+    var bh=sayLines.length*62+64;
+    var halfW=(inner-24)/2; ctx.font='500 32px '+BODY;
+    var pLines=wrapLines(ctx,t.power,halfW-56).slice(0,3), gLines=wrapLines(ctx,t.bug,halfW-56).slice(0,3);
+    var pbH=Math.max(pLines.length,gLines.length)*46+92;
+    var ySay=cy+410, yPar=ySay+bh+40, yPB=yPar+150+40, yDim=yPB+pbH+60, cardBottom=yDim+260;
+    var ch=cardBottom-cy, H=cardBottom+190;
+    c.height=H; ctx=c.getContext("2d");
+    /* 背景 */
+    ctx.fillStyle=t.color; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle= ink==="#FFFFFF" ? "rgba(255,255,255,.16)" : "rgba(0,0,0,.12)";
+    for(var y=20;y<H;y+=36) for(var x=20;x<W;x+=36){ ctx.beginPath(); ctx.arc(x,y,2.4,0,Math.PI*2); ctx.fill(); }
+    ctx.fillStyle=ink; ctx.font='500 34px '+BODY; ctx.textBaseline="top";
+    ctx.fillText(res.type===HIDDEN?"人机验证结果——":(res.type===FALLBACK?"系统没能识别我，只好把我分给了——":"我在「测测你是哪个 AI」里测出来是——"),72,72);
+    /* 并列时：引导语下方写 A+B */
+    if(res.combo){
+      var cs=80; ctx.font=cs+'px '+DISP;
+      while(ctx.measureText(res.combo).width>W-144 && cs>40){ cs-=4; ctx.font=cs+'px '+DISP; }
+      ctx.fillText(res.combo,72,124);
+    }
+    ctx.textBaseline="alphabetic";
+    /* 卡片 */
+    ctx.fillStyle= lum(t.color)<0.05 ? "#FFE14D" : "#14161B"; rr(ctx,cx+12,cy+12,cw,ch,44); ctx.fill();
+    ctx.fillStyle="#FFFFFF"; rr(ctx,cx,cy,cw,ch,44); ctx.fill();
+    ctx.lineWidth=5; ctx.strokeStyle="#14161B"; rr(ctx,cx,cy,cw,ch,44); ctx.stroke();
+    /* 头像 + 名字 */
+    ctx.fillStyle=t.color; rr(ctx,cx+60,cy+64,200,200,52); ctx.fill(); ctx.stroke();
+    ctx.font='120px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif'; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillStyle="#14161B"; ctx.fillText(t.emoji,cx+160,cy+170);
+    ctx.textAlign="left"; ctx.textBaseline="alphabetic";
+    ctx.fillStyle="#646B7A"; ctx.font='700 40px '+MONO; ctx.fillText(t.code,cx+300,cy+130);
+    ctx.fillStyle="#14161B"; var nameSize=t.name.length>5?92:108; ctx.font=nameSize+'px '+DISP; ctx.fillText(t.name,cx+296,cy+246);
+    /* 匹配度 */
+    ctx.font='600 30px '+BODY; var badge=res.badge; var bw=Math.min(ctx.measureText(badge).width+56, inner);
+    ctx.fillStyle="#FFE14D"; rr(ctx,cx+60,cy+306,bw,60,30); ctx.fill(); ctx.lineWidth=3; ctx.stroke();
+    ctx.fillStyle="#14161B"; ctx.fillText(badge,cx+88,cy+347);
+    /* 口头禅 */
+    ctx.fillStyle="#F2F3F6"; rr(ctx,cx+60,ySay,inner,bh,32); ctx.fill(); ctx.lineWidth=3; ctx.stroke();
+    ctx.fillStyle="#14161B"; ctx.font='500 40px '+BODY; sayLines.forEach(function(l,i){ ctx.fillText(l,cx+96,ySay+76+i*62); });
+    /* 参数 */
+    var ps=params(res.raw).filter(function(p){return ["温度","幻觉率","情绪价值"].indexOf(p.k)>-1;});
+    var pw=(inner-40)/3;
+    ps.forEach(function(p,i){
+      var px=cx+60+i*(pw+20);
+      ctx.fillStyle="#F2F3F6"; rr(ctx,px,yPar,pw,150,26); ctx.fill();
+      ctx.fillStyle="#646B7A"; ctx.font='500 28px '+BODY; ctx.fillText(p.k,px+28,yPar+52);
+      ctx.fillStyle="#14161B"; ctx.font='700 52px '+(/[\u4e00-\u9fa5]/.test(p.v)?BODY:MONO); ctx.fillText(p.v,px+28,yPar+120);
+    });
+    /* 超能力 / 已知 bug */
+    [["超能力",pLines],["已知 bug",gLines]].forEach(function(it,i){
+      var px=cx+60+i*(halfW+24);
+      ctx.lineWidth=3; ctx.strokeStyle="#D4D8E0"; rr(ctx,px,yPB,halfW,pbH,26); ctx.stroke();
+      ctx.fillStyle="#646B7A"; ctx.font='500 26px '+BODY; ctx.fillText(it[0],px+28,yPB+46);
+      ctx.fillStyle="#14161B"; ctx.font='500 32px '+BODY; it[1].forEach(function(l,j){ ctx.fillText(l,px+28,yPB+96+j*46); });
+    });
+    ctx.strokeStyle="#14161B";
+    /* 十五维条带 */
+    ctx.fillStyle="#646B7A"; ctx.font='500 28px '+BODY; ctx.fillText("十五维人格扫描",cx+60,yDim);
+    var gw=(inner-14*10)/15;
+    res.lv.forEach(function(l,i){
+      var bx=cx+60+i*(gw+10), full=150, hh=full*l/3;
+      ctx.fillStyle="#ECEEF2"; rr(ctx,bx,yDim+30,gw,full,10); ctx.fill();
+      ctx.fillStyle=t.color; rr(ctx,bx,yDim+30+full-hh,gw,hh,10); ctx.fill();
+    });
+    ctx.fillStyle="#9AA0AD"; ctx.font='500 24px '+BODY; ctx.textAlign="center";
+    ["情绪","表达","思考","行动","立场"].forEach(function(g,gi){ ctx.fillText(g, cx+60+gi*3*(gw+10)+(3*gw+20)/2, yDim+222); });
+    ctx.textAlign="left";
+    /* 页脚 */
+    ctx.fillStyle=ink; ctx.font='64px '+DISP; ctx.fillText("测测你是哪个 AI",72,H-92);
+    ctx.font='500 28px '+BODY; ctx.globalAlpha=.85; ctx.fillText("14 种 AI 人格 · 2 个隐藏结局 · 纯属娱乐",72,H-44); ctx.globalAlpha=1;
+    var url=c.toDataURL("image/png");
+    var framed = (function(){ try{ return window.self!==window.top; }catch(e){ return true; } })();
+    openSheet("分享图",
+      '<img class="share-img" src="'+url+'" alt="'+esc(t.code+" · "+t.name+" 结果分享图")+'">'+
+      '<p class="start-note">手机长按图片保存，电脑右键“图片另存为”</p>'+
+      (framed?'':'<a class="btn primary" id="dlBtn" href="'+url+'" download="我是'+esc(t.code)+'.png">下载图片</a>')
+    );
+  };
+  if(document.fonts && document.fonts.ready){ Promise.race([document.fonts.ready, new Promise(function(r){setTimeout(r,1500)})]).then(go); } else go();
+}
+})();
+</script>
+
+</body></html>
